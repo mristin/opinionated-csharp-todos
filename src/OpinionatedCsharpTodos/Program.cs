@@ -286,7 +286,7 @@ namespace OpinionatedCsharpTodos
                 new Option<string[]?>(
                     new[]{"--suffixes"},
                     "Suffix regular expressions that TODOs must conform to. " +
-                    $"[Default: {string.Join(" ", DefaultDisallowedPrefixes)}]"
+                    $"[Default: {string.Join(" ", DefaultSuffixes)}]"
                 ),
 
                 new Option<bool>(

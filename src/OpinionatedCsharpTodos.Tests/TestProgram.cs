@@ -312,5 +312,36 @@ namespace OpinionatedCsharpTodos.Tests
             Assert.AreEqual(expectedReport, File.ReadAllText(reportPath));
             Assert.AreEqual(0, exitCode);
         }
+
+        [Test]
+        public void TestPatternArguments()
+        {
+            using var tmpdir = new TemporaryDirectory();
+
+            using var consoleCapture = new ConsoleCapture();
+
+            string nl = Environment.NewLine;
+
+            string path = Path.Join(tmpdir.Path, "SomeProgram.cs");
+            File.WriteAllText(path,
+                $"// AAA BBB{nl}" +
+                $"// CCC");
+
+            int exitCode = Program.MainWithCode(
+                new[]
+                {
+                    "--inputs", path,
+                    "--prefix", "^AAA",
+                    "--disallowed-prefix", "CCC",
+                    "--suffix", "^ BBB"
+                });
+
+            Assert.AreEqual(
+                "",
+                consoleCapture.Error());
+            Assert.AreEqual("", consoleCapture.Output());
+            Assert.AreEqual(1, exitCode);
+
+        }
     }
 }

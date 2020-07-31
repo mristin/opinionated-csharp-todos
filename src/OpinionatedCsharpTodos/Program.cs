@@ -13,6 +13,7 @@ using TextWriter = System.IO.TextWriter;
 
 // We can not cherry-pick imports from System.CommandLine since InvokeAsync is a necessary extension.
 using System.CommandLine;
+using System.Linq;
 
 
 namespace OpinionatedCsharpTodos
@@ -196,6 +197,16 @@ namespace OpinionatedCsharpTodos
             if (!success)
             {
                 Console.Error.WriteLine("One or more TODOs were invalid. Please see above.");
+                Console.Error.WriteLine(
+                    "--prefix was set to: " +
+                    string.Join(" ", rules.Prefixes.Select(p => p.ToString())));
+                Console.Error.WriteLine(
+                    "--disallowed-prefix was set to: " +
+                    string.Join(" ", rules.DisallowedPrefixes.Select(p => p.ToString())));
+                Console.Error.WriteLine(
+                    "--suffix was set to: " +
+                    string.Join(" ", rules.Suffixes.Select(p => p.ToString())));
+
                 return 1;
             }
 

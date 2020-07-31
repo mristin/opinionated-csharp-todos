@@ -1,7 +1,6 @@
 ﻿using Environment = System.Environment;
 using Path = System.IO.Path;
 using File = System.IO.File;
-
 using NUnit.Framework;
 
 namespace OpinionatedCsharpTodos.Tests
@@ -134,11 +133,14 @@ namespace OpinionatedCsharpTodos.Tests
             int exitCode = Program.MainWithCode(new[] { "--inputs", path });
 
             Assert.AreEqual(
-            $"FAILED: {path}{nl}" +
-            $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
-            $" * Line 2, column 1: disallowed prefix (see --disallowed-prefixes): DONT-CHECK-IN{nl}" +
-            $"One or more TODOs were invalid. Please see above.{nl}",
-            consoleCapture.Error());
+                $"FAILED: {path}{nl}" +
+                $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
+                $" * Line 2, column 1: disallowed prefix (see --disallowed-prefixes): DONT-CHECK-IN{nl}" +
+                $"One or more TODOs were invalid. Please see above.{nl}" +
+                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
+                consoleCapture.Error());
             Assert.AreEqual("", consoleCapture.Output());
             Assert.AreEqual(1, exitCode);
         }
@@ -162,7 +164,10 @@ namespace OpinionatedCsharpTodos.Tests
             Assert.AreEqual(
                 $"FAILED: {path}{nl}" +
                 $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
-                $"One or more TODOs were invalid. Please see above.{nl}",
+                $"One or more TODOs were invalid. Please see above.{nl}" +
+                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual("", consoleCapture.Output());
             Assert.AreEqual(1, exitCode);
@@ -182,9 +187,13 @@ namespace OpinionatedCsharpTodos.Tests
 
             int exitCode = Program.MainWithCode(new[] { "--inputs", path, "--verbose" });
 
-            Assert.AreEqual($"FAILED: {path}{nl}" +
-                            $" * Line 1, column 1: disallowed prefix (see --disallowed-prefixes): todo{nl}" +
-                            $"One or more TODOs were invalid. Please see above.{nl}",
+            Assert.AreEqual(
+                $"FAILED: {path}{nl}" +
+                $" * Line 1, column 1: disallowed prefix (see --disallowed-prefixes): todo{nl}" +
+                $"One or more TODOs were invalid. Please see above.{nl}" +
+                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual("",
                 consoleCapture.Output());
@@ -211,7 +220,10 @@ namespace OpinionatedCsharpTodos.Tests
             Assert.AreEqual(
                 $"FAILED: {pathNotOk}{nl}" +
                 $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
-                $"One or more TODOs were invalid. Please see above.{nl}",
+                $"One or more TODOs were invalid. Please see above.{nl}" +
+                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual($"OK, 1 todo(s): {pathOk}{nl}", consoleCapture.Output());
             Assert.AreEqual(1, exitCode);

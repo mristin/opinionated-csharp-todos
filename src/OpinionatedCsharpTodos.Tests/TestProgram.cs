@@ -69,7 +69,7 @@ namespace OpinionatedCsharpTodos.Tests
             int exitCode = Program.MainWithCode(new[] { "--inputs", path });
 
             Assert.AreEqual("", consoleCapture.Error());
-            Assert.AreEqual($"{path}:0:0:TODO (mristin, 2020-07-20): Do something!{nl}",
+            Assert.AreEqual($"{path}:1:1:TODO (mristin, 2020-07-20): Do something!{nl}",
                 consoleCapture.Output());
             Assert.AreEqual(0, exitCode);
         }
@@ -89,7 +89,7 @@ namespace OpinionatedCsharpTodos.Tests
             int exitCode = Program.MainWithCode(new[] { "--inputs", path, "--case-insensitive" });
 
             Assert.AreEqual("", consoleCapture.Error());
-            Assert.AreEqual($"{path}:0:0:todo (mristin, 2020-07-20): Do something!{nl}",
+            Assert.AreEqual($"{path}:1:1:todo (mristin, 2020-07-20): Do something!{nl}",
                 consoleCapture.Output());
             Assert.AreEqual(0, exitCode);
         }
@@ -112,7 +112,7 @@ namespace OpinionatedCsharpTodos.Tests
             Assert.AreEqual("", consoleCapture.Error());
 
             Assert.AreEqual($"OK, 1 todo(s): {path}{nl}" +
-                            $"{path}:0:0:TODO (mristin, 2020-07-20): Do something!{nl}",
+                            $"{path}:1:1:TODO (mristin, 2020-07-20): Do something!{nl}",
                 consoleCapture.Output());
             Assert.AreEqual(0, exitCode);
         }
@@ -135,8 +135,8 @@ namespace OpinionatedCsharpTodos.Tests
 
             Assert.AreEqual(
             $"FAILED: {path}{nl}" +
-            $" * Line 0, column 0: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
-            $" * Line 1, column 0: disallowed prefix (see --disallowed-prefixes): DONT-CHECK-IN{nl}" +
+            $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
+            $" * Line 2, column 1: disallowed prefix (see --disallowed-prefixes): DONT-CHECK-IN{nl}" +
             $"One or more TODOs were invalid. Please see above.{nl}",
             consoleCapture.Error());
             Assert.AreEqual("", consoleCapture.Output());
@@ -161,7 +161,7 @@ namespace OpinionatedCsharpTodos.Tests
 
             Assert.AreEqual(
                 $"FAILED: {path}{nl}" +
-                $" * Line 0, column 0: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
+                $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
                 $"One or more TODOs were invalid. Please see above.{nl}",
                 consoleCapture.Error());
             Assert.AreEqual("", consoleCapture.Output());
@@ -183,7 +183,7 @@ namespace OpinionatedCsharpTodos.Tests
             int exitCode = Program.MainWithCode(new[] { "--inputs", path, "--verbose" });
 
             Assert.AreEqual($"FAILED: {path}{nl}" +
-                            $" * Line 0, column 0: disallowed prefix (see --disallowed-prefixes): todo{nl}" +
+                            $" * Line 1, column 1: disallowed prefix (see --disallowed-prefixes): todo{nl}" +
                             $"One or more TODOs were invalid. Please see above.{nl}",
                 consoleCapture.Error());
             Assert.AreEqual("",
@@ -210,7 +210,7 @@ namespace OpinionatedCsharpTodos.Tests
 
             Assert.AreEqual(
                 $"FAILED: {pathNotOk}{nl}" +
-                $" * Line 0, column 0: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
+                $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
                 $"One or more TODOs were invalid. Please see above.{nl}",
                 consoleCapture.Error());
             Assert.AreEqual($"OK, 1 todo(s): {pathOk}{nl}", consoleCapture.Output());
@@ -235,7 +235,7 @@ namespace OpinionatedCsharpTodos.Tests
             int exitCode = Program.MainWithCode(new[] { "--inputs", pathOk, "--excludes", pathNotOkButExcluded });
 
             Assert.AreEqual("", consoleCapture.Error());
-            Assert.AreEqual($"{pathOk}:0:0:TODO (mristin, 2020-07-20): Do something else!{nl}",
+            Assert.AreEqual($"{pathOk}:1:1:TODO (mristin, 2020-07-20): Do something else!{nl}",
                 consoleCapture.Output());
             Assert.AreEqual(0, exitCode);
         }

@@ -137,9 +137,9 @@ namespace OpinionatedCsharpTodos.Tests
                 $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
                 $" * Line 2, column 1: disallowed prefix (see --disallowed-prefixes): DONT-CHECK-IN{nl}" +
                 $"One or more TODOs were invalid. Please see above.{nl}" +
-                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
-                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
-                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
+                $"--prefixes was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefixes was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffixes was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual("", consoleCapture.Output());
             Assert.AreEqual(1, exitCode);
@@ -165,9 +165,9 @@ namespace OpinionatedCsharpTodos.Tests
                 $"FAILED: {path}{nl}" +
                 $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
                 $"One or more TODOs were invalid. Please see above.{nl}" +
-                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
-                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
-                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
+                $"--prefixes was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefixes was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffixes was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual("", consoleCapture.Output());
             Assert.AreEqual(1, exitCode);
@@ -191,9 +191,9 @@ namespace OpinionatedCsharpTodos.Tests
                 $"FAILED: {path}{nl}" +
                 $" * Line 1, column 1: disallowed prefix (see --disallowed-prefixes): todo{nl}" +
                 $"One or more TODOs were invalid. Please see above.{nl}" +
-                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
-                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
-                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
+                $"--prefixes was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefixes was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffixes was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual("",
                 consoleCapture.Output());
@@ -221,11 +221,40 @@ namespace OpinionatedCsharpTodos.Tests
                 $"FAILED: {pathNotOk}{nl}" +
                 $" * Line 1, column 1: invalid suffix (see --suffixes):  (mristin): Do something!{nl}" +
                 $"One or more TODOs were invalid. Please see above.{nl}" +
-                $"--prefix was set to: ^TODO ^BUG ^HACK{nl}" +
-                $"--disallowed-prefix was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
-                @"--suffix was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
+                $"--prefixes was set to: ^TODO ^BUG ^HACK{nl}" +
+                $"--disallowed-prefixes was set to: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack{nl}" +
+                @"--suffixes was set to: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." + nl,
                 consoleCapture.Error());
             Assert.AreEqual($"OK, 1 todo(s): {pathOk}{nl}", consoleCapture.Output());
+            Assert.AreEqual(1, exitCode);
+        }
+
+        [Test]
+        public void TestRuleArgumentsConsidered()
+        {
+            using var tmpdir = new TemporaryDirectory();
+
+            using var consoleCapture = new ConsoleCapture();
+
+            string nl = Environment.NewLine;
+
+            string pathNotOk = Path.Join(tmpdir.Path, "NotOk.cs");
+            File.WriteAllText(pathNotOk, $"// AAA: Do something!{nl}");
+
+            int exitCode = Program.MainWithCode(
+                new[]
+                {
+                    "--inputs", pathNotOk, "--prefixes", "^AAA", "--disallowed-prefixes", "^BBB", "--suffixes", "^CCC"
+                });
+
+            Assert.AreEqual(
+                $"FAILED: {pathNotOk}{nl}" +
+                $" * Line 1, column 1: invalid suffix (see --suffixes): : Do something!{nl}" +
+                $"One or more TODOs were invalid. Please see above.{nl}" +
+                $"--prefixes was set to: ^AAA{nl}" +
+                $"--disallowed-prefixes was set to: ^BBB{nl}" +
+                @"--suffixes was set to: ^CCC" + nl,
+                consoleCapture.Error());
             Assert.AreEqual(1, exitCode);
         }
 

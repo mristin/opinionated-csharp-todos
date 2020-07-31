@@ -21,6 +21,24 @@ namespace OpinionatedCsharpTodos
     // ReSharper disable once ClassNeverInstantiated.Global
     public class Program
     {
+        // We need to specify the default values separately instead of using System.CommandLine
+        // due to this issue: https://github.com/dotnet/command-line-api/issues/984
+        private static readonly string[] DefaultPrefixes = new[]
+        {
+            "^TODO", "^BUG", "^HACK"
+        };
+
+        private static readonly string[] DefaultDisallowedPrefixes = new[]
+        {
+            "^DONT-CHECK-IN", "^Todo", "^todo", "^ToDo",
+            "^Bug", "^bug", "^Hack", "^hack"
+        };
+
+        private static readonly string[] DefaultSuffixes = new[]
+        {
+            @"^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ."
+        };
+
         private static Inspection.Rules? ParseRules(
             IEnumerable<string> prefixPatterns,
             IEnumerable<string> disallowedPrefixPatterns,
@@ -162,9 +180,9 @@ namespace OpinionatedCsharpTodos
             // ReSharper disable CollectionNeverUpdated.Global
             public string[] Inputs { get; set; }
             public string[]? Excludes { get; set; }
-            public PatternsArg Prefixes { get; set; }
-            public PatternsArg DisallowedPrefixes { get; set; }
-            public PatternsArg Suffixes { get; set; }
+            public string[]? Prefixes { get; set; }
+            public string[]? DisallowedPrefixes { get; set; }
+            public string[]? Suffixes { get; set; }
             public bool CaseInsensitive { get; set; }
             public string? ReportPath { get; set; }
             public bool Verbose { get; set; }
@@ -176,9 +194,9 @@ namespace OpinionatedCsharpTodos
         private static int Scan(Arguments a)
         {
             Inspection.Rules? rules = ParseRules(
-                a.Prefixes,
-                a.DisallowedPrefixes,
-                a.Suffixes,
+                a.Prefixes ?? DefaultPrefixes,
+                a.DisallowedPrefixes ?? DefaultDisallowedPrefixes,
+                a.Suffixes ?? DefaultSuffixes,
                 a.CaseInsensitive);
 
             if (rules == null)
@@ -198,13 +216,13 @@ namespace OpinionatedCsharpTodos
             {
                 Console.Error.WriteLine("One or more TODOs were invalid. Please see above.");
                 Console.Error.WriteLine(
-                    "--prefix was set to: " +
+                    "--prefixes was set to: " +
                     string.Join(" ", rules.Prefixes.Select(p => p.ToString())));
                 Console.Error.WriteLine(
-                    "--disallowed-prefix was set to: " +
+                    "--disallowed-prefixes was set to: " +
                     string.Join(" ", rules.DisallowedPrefixes.Select(p => p.ToString())));
                 Console.Error.WriteLine(
-                    "--suffix was set to: " +
+                    "--suffixes was set to: " +
                     string.Join(" ", rules.Suffixes.Select(p => p.ToString())));
 
                 return 1;
@@ -254,14 +272,6 @@ namespace OpinionatedCsharpTodos
             return 0;
         }
 
-        public class PatternsArg : List<string>
-        {
-            public override string ToString()
-            {
-                return string.Join(" ", this.ToArray());
-            }
-        }
-
         public static int MainWithCode(string[] args)
         {
             var rootCommand = new RootCommand(
@@ -276,26 +286,22 @@ namespace OpinionatedCsharpTodos
                     new[] {"--excludes", "-e"},
                     "Glob patterns of the files to be excluded from inspection"),
 
-                new Option<PatternsArg>(
+                new Option<string[]?>(
                     new[]{"--prefixes"},
-                    () => new PatternsArg{"^TODO", "^BUG", "^HACK"},
-                    "Prefix regular expressions marking the TODOs."
+                    "Prefix regular expressions marking the TODOs. " +
+                    $"[Default: {string.Join(" ", DefaultPrefixes)}]"
                 ),
 
-                new Option<PatternsArg>(
+                new Option<string[]?>(
                     new[]{"--disallowed-prefixes"},
-                    () => new PatternsArg
-                    {
-                        "^DONT-CHECK-IN", "^Todo", "^todo", "^ToDo",
-                        "^Bug", "^bug", "^Hack", "^hack"
-                    },
-                    "Prefix regular expressions which should not occur."
+                    "Prefix regular expressions which should not occur. " +
+                    $"[Default: {string.Join(" ", DefaultDisallowedPrefixes)}]"
                 ),
 
-                new Option<PatternsArg>(
+                new Option<string[]?>(
                     new[]{"--suffixes"},
-                    () => new PatternsArg { @"^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): ." },
-                    "Suffix regular expressions that TODOs must conform to."
+                    "Suffix regular expressions that TODOs must conform to. " +
+                    $"[Default: {string.Join(" ", DefaultSuffixes)}]"
                 ),
 
                 new Option<bool>(

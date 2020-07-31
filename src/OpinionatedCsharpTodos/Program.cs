@@ -139,7 +139,7 @@ namespace OpinionatedCsharpTodos
                                 throw new InvalidOperationException($"Unhandled case: {record.Status}");
                         }
 
-                        Console.Error.WriteLine($" * Line {record.Line}, column {record.Column}: {message}");
+                        Console.Error.WriteLine($" * Line {record.Line + 1}, column {record.Column + 1}: {message}");
                     }
                 }
 
@@ -206,7 +206,8 @@ namespace OpinionatedCsharpTodos
                     foreach (var record in fileRecords.Records)
                     {
                         Console.WriteLine(
-                            $"{fileRecords.Path}:{record.Line}:{record.Column}:{record.Prefix + record.Suffix}");
+                            $"{fileRecords.Path}:{record.Line + 1}:{record.Column + 1}:" +
+                            record.Prefix + record.Suffix);
                     }
                 }
             }

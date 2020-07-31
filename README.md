@@ -158,19 +158,35 @@ dotnet opinionated-csharp-todos \
 
 ### Patterns
 
-**Prefixes** are specified as regular expressions using `--prefix` . 
+The comments are inspected based on their *prefix* and their *suffix*. Namely,
+opnionated-csharp-todos considers only comments which match a certain set of
+prefix patterns. 
+
+If the comment matches one of the special prefixes (given in `--prefixes`, 
+see below), the remainder of the comment (*the suffix*) needs to match one of 
+the suffix patterns (given in `--suffixes`, see below). Otherwise, the comment
+is reported as invalid.
+
+Additionally, you can specify a list of disallowed prefixes (given in 
+`--disallowed-prefixes`, see below), so that all 
+comments matching those are also reported as invalid. The disallowed prefixes
+are particularly useful if you want to mark parts of the code which should not
+be checked in into the version control (*e.g*, `// DONT-CHECK-IN`) or if you
+want to enforce consistency in prefixes (*e.g.*, disallow `// todo`).
+
+**Prefixes** are specified as regular expressions using `--prefixes` . 
 
 For example, if you only want to scan for `// TODO` and `// BUG`:
 
 ```bash
 dotnet opinionated-csharp-todos \
     --inputs "**/*.cs" \
-    --prefix "^TODO" "^BUG"
+    --prefixes "^TODO" "^BUG"
 ```
 
 **Disallowed prefixes**. You can make opinionated-csharp-comments fail whenever 
 one of the disallowed prefixes is encountered specified as regular expressions
-using `--disallowed-prefix`. 
+using `--disallowed-prefixes`. 
 
 This is particularly handy if you want to include the tool in your pre-commit 
 checks to make sure you do not check in, say, unfinished work.   
@@ -180,7 +196,7 @@ For example, if you want the tool to fail on `// DONT-CHECK-IN` and ` // DEBUG`:
 ```bash
 dotnet opinionated-csharp-todos \
     --inputs "**/*.cs" \
-    --disallowed-prefix "^DONT-CHECK-IN" "^DEBUG"
+    --disallowed-prefixes "^DONT-CHECK-IN" "^DEBUG"
 ```
 
 **Suffixes** are usually also required to follow the convention(s). You can
@@ -191,12 +207,16 @@ For example, to enforce suffix to match `// TODO (mristin, 2020-07-20): ...`:
 ```bash
 dotnet opinionated-csharp-todos \
     --inputs "**/*.cs" \
-    --suffix '^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): '
+    --suffixes '^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): '
 ```
 
-We provide the **defaults** for `--prefix`, `--disallowed-prefix` and `--suffix`
-which probably work in most of the cases. See the output of `--help` for 
-more information.
+We provide the **defaults** for `--prefixes`, `--disallowed-prefixes` and 
+`--suffixes` which probably work in most of the cases:
+
+* `--prefixes`: `^TODO`, `^BUG`, `^HACK`
+* `--disallowed-prefixes`: `^DONT-CHECK-IN`, `^Todo`, `^todo`, `^ToDo`,
+  `^Bug`, `^bug`, `^Hack`, `^hack`
+* `--suffixes`: `^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): .` 
 
 ### Report
 

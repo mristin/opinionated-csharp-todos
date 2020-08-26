@@ -121,6 +121,34 @@ dotnet tool install OpinionatedCsharpTodos
 
 ## Usage
 
+### Overview
+To obtain an overview of the command-line arguments, use `--help`:
+
+```bash
+dotnet doctest-csharp --help
+```
+<!--- Help starts. -->
+```
+OpinionatedCsharpTodos:
+  Examines and collects the TODOs from your C# code.
+
+Usage:
+  OpinionatedCsharpTodos [options]
+
+Options:
+  -i, --inputs <inputs> (REQUIRED)               Glob patterns of the files to be inspected
+  -e, --excludes <excludes>                      Glob patterns of the files to be excluded from inspection
+  --prefixes <prefixes>                          Prefix regular expressions marking the TODOs. [Default: ^TODO ^BUG ^HACK]
+  --disallowed-prefixes <disallowed-prefixes>    Prefix regular expressions which should not occur. [Default: ^DONT-CHECK-IN ^Todo ^todo ^ToDo ^Bug ^bug ^Hack ^hack]
+  --suffixes <suffixes>                          Suffix regular expressions that TODOs must conform to. [Default: ^ \([^)]+, [0-9]{4}-[0-9]{2}-[0-9]{2}\): .]
+  --case-insensitive                             If set, the regular expressions are applied as case-insensitive
+  --report-path <report-path>                    If set, outputs the TODOs as a JSON (the path '-' denotes STDOUT).
+  --verbose                                      If set, makes the console output more verbose
+  --version                                      Show version information
+  -?, -h, --help                                 Show help and usage information
+```
+<!--- Help ends. -->
+
 ### Inputs and Excludes
 
 You run opinionated-csharp-todos through `dotnet`.

@@ -38,6 +38,13 @@ function Main
         throw "The unit tests failed."
     }
 
+    $outDir = Join-Path (Split-Path -Parent $PSScriptRoot) "out"
+    Write-Host "Publishing to $outDir ..."
+    dotnet publish -c Release -o $outDir
+
+    Write-Host "Checking --help in Readme..."
+    ./CheckHelpInReadme.ps1
+
     Pop-Location
 }
 

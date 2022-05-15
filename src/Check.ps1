@@ -11,7 +11,7 @@ function Main
     Set-Location $PSScriptRoot
 
     Write-Host "Checking the format..."
-    dotnet format --check
+    dotnet format --verify-no-changes
     if ($LASTEXITCODE -ne 0)
     {
         throw "Format check failed."
